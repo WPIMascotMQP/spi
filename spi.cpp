@@ -178,11 +178,13 @@ int main() {
         current_byte += encodeInt16(buffer, current_byte, index);
         current_byte += encodeFloat(buffer, current_byte, radians);
         current_byte += encodePattern(buffer, current_byte);
+        unsigned char original[BUFFER_SIZE];
+        overwriteBytes(original, 0, buffer, 0, BUFFER_SIZE);
         std::cout << "Sending:  " << getStringHex(buffer, current_byte) << std::endl;
 
-        result = wiringPiSPIDataRW(CHANNEL, buffer, 5);
-        while(!findCommand(buffer)) {
-
+        result = wiringPiSPIDataRW(CHANNEL, buffer, BUFFER_SIZE);
+        while(!findCommand(buffer) || memcmp(buffer, original, BUFFER_SIZE)) {
+			result = wiringPiSPIDataRW(CHANNEL, buffer, BUFFER_SIZE);
         }
 
         std::cout << "Received: "  << getStringHex(buffer, BUFFER_SIZE) << std::endl;
