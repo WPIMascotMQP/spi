@@ -183,13 +183,11 @@ int main() {
         std::cout << "Sending:  " << getStringHex(buffer, current_byte) << std::endl;
 
         result = wiringPiSPIDataRW(CHANNEL, buffer, BUFFER_SIZE);
-        while(!findCommand(buffer) || memcmp(buffer, original, BUFFER_SIZE)) {
-			result = wiringPiSPIDataRW(CHANNEL, buffer, BUFFER_SIZE);
-        }
-
-        std::cout << "Received: "  << getStringHex(buffer, BUFFER_SIZE) << std::endl;
-        handleCommand(buffer);
-
+        if(!findCommand(buffer) || memcmp(buffer, original, BUFFER_SIZE)) {
+			//result = wiringPiSPIDataRW(CHANNEL, buffer, BUFFER_SIZE);
+        	std::cout << "Received: "  << getStringHex(buffer, BUFFER_SIZE) << std::endl;
+        	handleCommand(buffer);
+	}
         // Pause so we can see them
         //sleep(1);
     }
@@ -203,7 +201,7 @@ int main() {
  @param buffer The buffer where the command is (must start at beginning of buffer)
  */
 void handleCommand(unsigned char* buffer) {
-  printf("Received Command: %s\n", buffer);
+  std::cout << "Received Command: " << getStringHex(buffer, BUFFER_SIZE) << std::endl;
 	if(buffer[cmd_byte] == MOTORPOSITION) {
 		// If command is the current motor position
 		size_t current_byte = 2;
