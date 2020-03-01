@@ -110,10 +110,12 @@ bool findCommand(unsigned char* buffer);
 std::string getStringHex(unsigned char* buffer, size_t length);
 size_t overwriteBytes(unsigned char* buffer, size_t byte_start, unsigned char* buf, size_t inc_start, size_t byte_inc);
 size_t encodePattern(unsigned char* buffer, size_t byte_start);
+size_t encodeInt8(unsigned char* buffer, size_t byte_start, int8_t num);
 size_t encodeInt16(unsigned char* buffer, size_t byte_start, int16_t num);
 size_t encodeInt32(unsigned char* buffer, size_t byte_start, int32_t num);
 size_t encodeFloat(unsigned char* buffer, size_t byte_start, float num);
 
+int8_t decodeInt8(unsigned char* buffer, size_t byte_start);
 int16_t decodeInt16(unsigned char* buffer, size_t byte_start);
 int32_t decodeInt32(unsigned char* buffer, size_t byte_start);
 float decodeFloat(unsigned char* buffer, size_t byte_start);
@@ -326,6 +328,18 @@ size_t encodePattern(unsigned char* buffer, size_t byte_start) {
 }
 
 /**
+ Encodes a 8 bit int into the given buffer
+ @param buffer The buffer to write into
+ @param byte_start The starting byte to write into
+ @param num The 8 bit int to encode
+ @return The number of bytes encoded
+ */
+size_t encodeInt8(unsigned char* buffer, size_t byte_start, int8_t num) {
+	buffer[byte_start + 0] = num & 0xFF;
+	return sizeof(int8_t);
+}
+
+/**
  Encodes a 16 bit int into the given buffer
  @param buffer The buffer to write into
  @param byte_start The starting byte to write into
@@ -367,6 +381,20 @@ size_t encodeFloat(unsigned char* buffer, size_t byte_start, float num) {
 	buffer[byte_start + 2] = (number >> 8) & 0xFF;
 	buffer[byte_start + 3] = number & 0xFF;
 	return sizeof(float);
+}
+
+/**
+ Decodes a 8 bit int from given buffer
+ @param buffer The buffer to read from
+ @param byte_start The starting byte to read from
+ @return The 8 bit int decoded
+ */
+int8_t decodeInt8(unsigned char* buffer, size_t byte_start) {
+	unsigned char buf[1];
+	buf[0] = buffer[byte_start + 0];
+	int8_t number = *(int8_t*) &buf;
+
+	return number;
 }
 
 /**
