@@ -165,8 +165,7 @@ int main() {
         std::string token1 = input.substr(0, input.find(delimiter));
         std::string token2 = input.substr(input.find(delimiter) + 1, input.length() - 1);
         int16_t index = (int16_t) std::stoi(token1);
-        float radians = std::stof(token2);
-        std::cout << token1 << " " << index << "|" << token2 << " " << radians << std::endl;
+        int32_t steps = (int32_t) std::stoi(token1);
 
         memset(buffer, 0, BUFFER_SIZE);
         unsigned char* buffer = new unsigned char[BUFFER_SIZE];
@@ -175,8 +174,8 @@ int main() {
         current_byte += encodePattern(buffer, current_byte);
         buffer[current_byte++] = 0x00; // Flag Byte
         buffer[current_byte++] = MOTORPOSITION;
-        current_byte += encodeInt16(buffer, current_byte, index);
-        current_byte += encodeFloat(buffer, current_byte, radians);
+        current_byte += encodeInt8(buffer, current_byte, index);
+        current_byte += encodeInt32(buffer, current_byte, steps);
         current_byte += encodePattern(buffer, current_byte);
         unsigned char original[BUFFER_SIZE];
         overwriteBytes(original, 0, buffer, 0, BUFFER_SIZE);
